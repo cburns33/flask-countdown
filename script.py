@@ -12,19 +12,36 @@ def generate_countdown_image():
     # Calculate time remaining
     now = datetime.now()
     delta = TARGET_DATE - now
-    days, hours, minutes, seconds = delta.days, delta.seconds // 3600, (delta.seconds % 3600) // 60, delta.seconds % 60
+    days, hours, minutes, seconds = (
+        delta.days,
+        delta.seconds // 3600,
+        (delta.seconds % 3600) // 60,
+        delta.seconds % 60
+    )
 
     # Create blank image
     img = Image.new('RGB', (400, 100), color="#8427e2")
     draw = ImageDraw.Draw(img)
-    
-    # Load font (ensure path is correct)
-    font = ImageFont.load_default()
+
+    # Load font
+    try:
+        font = ImageFont.truetype("arial.ttf", 40)
+    except IOError:
+        font = ImageFont.load_default()
 
     # Draw text
     countdown_text = f"{days}d {hours}h {minutes}m {seconds}s"
-    text_size = draw.textsize(countdown_text, font=font)
-    draw.text(((400 - text_size[0]) / 2, (100 - text_size[1]) / 2), countdown_text, fill="white", font=font)
+
+    # Use textbbox instead of textsize
+    text_bbox = draw.textbbox((0, 0), countdown_text, font=font)
+    text_width = text_bbox[2] - text_bbox[0]
+    text_height = text_bbox[3] - text_bbox[1]
+
+    # Calculate position so text is centered
+    x = (400 - text_width) / 2
+    y = (100 - text_height) / 2
+
+    draw.text((x, y), countdown_text, fill="white", font=font)
 
     # Save image to a byte buffer
     img_io = io.BytesIO()
