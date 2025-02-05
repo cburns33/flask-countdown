@@ -19,8 +19,7 @@ def generate_countdown_image():
     draw = ImageDraw.Draw(img)
     
     # Load font (ensure path is correct)
- font = ImageFont.load_default()
-
+    font = ImageFont.load_default()
 
     # Draw text
     countdown_text = f"{days}d {hours}h {minutes}m {seconds}s"
